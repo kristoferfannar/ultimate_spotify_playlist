@@ -3,6 +3,7 @@ import requests
 from secretsAPI import spotify_token, spotify_user_id, python_playlist_id
 import pprint
 printer = pprint.PrettyPrinter()
+SITE = 'https://open.spotify.com/'
 
 CLIENTID = 'c79f8f3e44374b02a328880197d78508'
 CLIENTSECRET = '4223f8c46a6f418f97c2d7886c253793' # frá appinu í spotify for develepors
@@ -40,10 +41,7 @@ def get_spotify_uri(songname, artist):
 
 
 
-def find_playlist_from_link(playlistlink):
-    sind = len('https://open.spotify.com/playlist/')
-    eind = playlistlink.find('?')
-    playlist_id = playlistlink[sind:eind]
+def find_playlist_from_link(playlist_id):
 
     query = f'https://api.spotify.com/v1/playlists/{playlist_id}'
 
@@ -51,27 +49,40 @@ def find_playlist_from_link(playlistlink):
 
     playlists_response = requests.get(query, headers = header)
     json_playlists = playlists_response.json()
-    print(json_playlists)
+    #print(json_playlists)
 
     return json_playlists
 
-def all_songs_from_playlist_link(playlistlink): #have to deal with if len(songslist > 100)
-    json_playlist = find_playlist_from_link(playlistlink)
+def all_songs_from_playlist_id(playlist_id): #have to deal with if len(songslist > 100)
+    json_playlist = find_playlist_from_link(playlist_id)
     songslist = [i['track']['uri'] for i in json_playlist['tracks']['items']] #gives me the uris of all the playlist's tracks.
-
+    
+    json_playlist = json_playlist['tracks'] #to deal with the while loop.
+    while json_playlist['next'] is not None:
+        json_playlist = requests.get(json_playlist['next'], headers = {'Authorization': 'Bearer {}'.format(spotify_token), 'Content-Type':'application/json'})
+        json_playlist = json_playlist.json()
+        songslist += [i['track']['uri'] for i in json_playlist['items']]
+    
     return songslist
 
-
+def find_id_from_link(link):
+    link = link[len(SITE):]
+    slash = link.find('/')
+    qm = link.find('?')
+    return link[slash+1:qm]
 
 
 def add_from_oldplaylist_to_newplaylist(oldplaylist_link, newplaylist_id):
+    oldplaylist_id = find_id_from_link(oldplaylist_link)
+
     query = f'https://api.spotify.com/v1/playlists/{newplaylist_id}/tracks'
     header = {'Content-Type':'application/json','Authorization': f'Bearer {spotify_token}'}
-    rdata = all_songs_from_playlist_link(oldplaylist_link)
+
+    rdata = all_songs_from_playlist_id(oldplaylist_id)
 
     response = requests.post(query, headers= header, data=json.dumps(rdata))
     json_resp = response.json()
-    print(json_resp)
+    #print(json_resp)
 
 
 
@@ -83,9 +94,6 @@ def print_dict(somedic, indent = ''):
             print_dict(somedic[key], indent + '\t')
         else:
             print(indent + key,':', somedic[key])
-
-#print_dict(response_list)
-
 
 
 
@@ -104,4 +112,9 @@ if __name__ == "__main__":
     # jsonplaylist = all_songs_from_playlist_link('https://open.spotify.com/playlist/00y8K6estzrMcPVFCfPMaW?si=ZntEY-EdQHOTfTHqfqsBoQ&utm_source=copy-link')
     # print(jsonplaylist)
 
-    add_from_oldplaylist_to_newplaylist('https://open.spotify.com/playlist/00y8K6estzrMcPVFCfPMaW?si=ZntEY-EdQHOTfTHqfqsBoQ&utm_source=copy-link',python_playlist_id)
+    playlist_id = find_id_from_link('https://open.spotify.com/playlist/07xYmqDsF1uYKnnpO2hWzL?si=253475c0a82b46a9')
+    songdict = all_songs_from_playlist_id(playlist_id)
+    print(songdict)
+
+
+
