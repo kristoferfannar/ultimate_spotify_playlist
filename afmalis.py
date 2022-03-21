@@ -87,19 +87,24 @@ def add_from_oldplaylist_to_newplaylist(oldplaylist_link, newplaylist_id):
 
 
 def add_songlist_to_playlist(songlist, playlist_id):
+
     query = f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks'
-    response = requests.post(query, headers = HEADER, data = json.dumps(songlist))
+    response = requests.post(query, headers = HEADER, data = json.dumps(songlist[:100]))
     print(response)
-    print(response.json())
+    
+    if len(songlist) > 100:
+        add_songlist_to_playlist(songlist[100:], playlist_id)
 
 
 def remove_songlist_from_playlist(songlist, playlist_id):
     query = f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks'
-    trackdata = {"tracks":[{"uri":i} for i in songlist]}
+    trackdata = {"tracks":[{"uri":i} for i in songlist[:100]]}
 
     response = requests.delete(query, headers = HEADER, data = json.dumps(trackdata))
     print(response)
-    print(response.json())
+
+    if len(songlist) > 100:
+        remove_songlist_from_playlist(songlist[100:], playlist_id)
 
 
 def print_dict(somedic, indent = ''):
