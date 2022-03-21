@@ -16,7 +16,6 @@ def update_forms_nr(counter, formsreadto):
         forms.write(str(counter+formsreadto))
 
 
-
 def opencsvfile(directory, forms):
     with open(directory) as file:
         lines = []
@@ -25,6 +24,8 @@ def opencsvfile(directory, forms):
             if index >= forms and index > 0:
                 lines.append(line)
     return lines
+
+
 
 def get_all_songs():
     with open(STORAGE, 'r') as file:
@@ -50,6 +51,10 @@ def update_songdict(songlist, songdict):
         else:
             songdict[song] = 1
     return songdict
+
+
+
+
 
 
 if __name__ == "__main__":
