@@ -10,11 +10,12 @@ HEADER = {'Content-Type':'application/json','Authorization': f'Bearer {spotify_t
 
 
 
-def create_playlist(playlistname, playlistdescription = '', publicstatus = False):
+def create_playlist(playlistname, playlistdescription = '', publicstatus = False, collabstatus = False):
     request_body = json.dumps({
         "name": playlistname,
         "description": playlistdescription,
-        "public": publicstatus
+        "public": publicstatus,
+        "collaborative": collabstatus
         })
 
     endpoint = f"https://api.spotify.com/v1/users/{spotify_user_id}/playlists"
@@ -91,6 +92,7 @@ def add_songlist_to_playlist(songlist, playlist_id):
     query = f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks'
     response = requests.post(query, headers = HEADER, data = json.dumps(songlist[:100]))
     print(response)
+    print(response.json())
     
     if len(songlist) > 100:
         add_songlist_to_playlist(songlist[100:], playlist_id)
@@ -119,7 +121,8 @@ def print_dict(somedic, indent = ''):
 
 
 if __name__ == "__main__":
+    #create_playlist('Afmælis!', 'Find the bug', False, True) #legacy nuna. BANNAÐ AÐ EYÐA!;)
+    create_playlist('Restin', 'Lögin sem komust ekki inn á hinn.', False, True) #legacy nuna. BANNAÐ AÐ EYÐA!;)
 
-    #create_playlist('Python2', 'önnur tilraun', True)
-    
     pass
+

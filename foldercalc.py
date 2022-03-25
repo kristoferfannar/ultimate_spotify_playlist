@@ -1,3 +1,10 @@
+"""For collecting links from Lög.csv and updating the database: songs.csv 
+in accordance to what links from Lög.csv have not been accounted for. 
+oldforms.txt keeps hold of what links in Lög.csv have already been accounted for.
+
+#need to fix that if songs from a link have been added to the database, another submission of the same link wont be accounted for.
+# basically keep a file containing all links already checked."""
+
 import csv
 from afmalis import all_songs_from_playlist_id
 
@@ -71,9 +78,11 @@ if __name__ == "__main__":
                 songuri = all_songs_from_playlist_id(id)
 
             elif link.startswith('track'):
-                songuri = [f'spotify:track:{id}']
+                songuri = [f'spotify:track:{id}'] * 2
         except KeyError:
             continue
+
+
 
         songdict = update_songdict(songuri, songdict)
 
