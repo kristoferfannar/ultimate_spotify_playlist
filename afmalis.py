@@ -2,10 +2,6 @@ import json
 import requests
 from secretsAPI import spotify_token, spotify_user_id, python_playlist_id
 SITE = 'https://open.spotify.com/'
-
-CLIENTID = 'c79f8f3e44374b02a328880197d78508'
-CLIENTSECRET = '4223f8c46a6f418f97c2d7886c253793' # frá appinu í spotify for develepors
-playlist = 'https://open.spotify.com/playlist/3MDQyYbnII6FS2k81Jmgn9?si=3d03e1bba6fd4a2f' # Útileguplaylistinn minn
 HEADER = {'Content-Type':'application/json','Authorization': f'Bearer {spotify_token}'}
 
 
@@ -55,19 +51,19 @@ def find_playlist_from_link(playlist_id):
 
     return json_playlists
 
-def all_songs_from_playlist_id(playlist_id): #have to deal with if len(songslist > 100)
+def all_songs_from_playlist_id(playlist_id):
     json_playlist = find_playlist_from_link(playlist_id)
     songslist = [i['track']['uri'] for i in json_playlist['tracks']['items']] #gives me the uris of all the playlist's tracks.
     
     json_playlist = json_playlist['tracks'] #to deal with the while loop.
-    while json_playlist['next'] is not None:
+    while json_playlist['next'] is not None: #if len(sognslist > 100), the json of the response has a 'next' key, containing the rest of the songs.
         json_playlist = requests.get(json_playlist['next'], headers = {'Authorization': 'Bearer {}'.format(spotify_token), 'Content-Type':'application/json'})
         json_playlist = json_playlist.json()
         songslist += [i['track']['uri'] for i in json_playlist['items']]
     
     return songslist
 
-def find_id_from_link(link):
+def find_id_from_link(link): #input a spotify link and outputs the song/playlist id, contained in the link.
     link = link[len(SITE):]
     slash = link.find('/')
     qm = link.find('?')
@@ -121,8 +117,8 @@ def print_dict(somedic, indent = ''):
 
 
 if __name__ == "__main__":
-    #create_playlist('Afmælis!', 'Find the bug', False, True) #legacy nuna. BANNAÐ AÐ EYÐA!;)
-    create_playlist('Restin', 'Lögin sem komust ekki inn á hinn.', False, True) #legacy nuna. BANNAÐ AÐ EYÐA!;)
+    #create_playlist('Afmælis!', 'Find the bug', False, True) #legacy nuna.!;) #the playlist created for the birthday (containing the 200 most popular songs from Google forms.)
+    #create_playlist('Restin', 'Lögin sem komust ekki inn á hinn.', False, True)!;) #a playlist containing the 1100 or so other songs.
 
     pass
 

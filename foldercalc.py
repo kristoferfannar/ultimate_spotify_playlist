@@ -8,7 +8,7 @@ oldforms.txt keeps hold of what links in Lög.csv have already been accounted fo
 import csv
 from afmalis import all_songs_from_playlist_id
 
-CSVFILE = __file__[:-13] + "Playlistar/Lög.csv"
+CSVFILE = __file__[:-13] + "Playlistar/Lög.csv" 
 SITE = 'https://open.spotify.com/'
 STORAGE = 'songs.csv'
 
@@ -16,11 +16,11 @@ def findformsnr():
     with open('oldforms.txt') as forms:
         for line in forms:
             return int(line)
-formsreadto = findformsnr()
+formsreadto = findformsnr() #to keep track of which links in the Lög.csv file i have already collected from. That way I wont check the same line twice.
 
 def update_forms_nr(counter, formsreadto):
     with open('oldforms.txt', 'w') as forms:
-        forms.write(str(counter+formsreadto))
+        forms.write(str(counter+formsreadto)) #updates the oldforms.txt file to the current line of Lög.csv, saying that I checked every line currently in Lög.csv
 
 
 def opencsvfile(directory, forms):
@@ -67,9 +67,9 @@ def update_songdict(songlist, songdict):
 if __name__ == "__main__":
     lines = opencsvfile(CSVFILE, formsreadto)
     #print(lines)
-    songdict = get_all_songs()
+    songdict = get_all_songs() 
     for line in lines:
-        link = line[1][len(SITE):]
+        link = line[1][len(SITE):] 
         slash = link.find('/')
         qm = link.find('?')
         id = link[slash+1:qm]
