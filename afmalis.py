@@ -1,14 +1,11 @@
-import os
-
 import json
 import requests
-from dotenv import load_dotenv
+from dotenv import load_dotenv, get_key
 
 load_dotenv()
 
-
-SPOTIFY_TOKEN, SPOTIFY_USER_ID = os.getenv("SPOTIFY_TOKEN"), os.getenv(
-    "SPOTIFY_USER_ID"
+SPOTIFY_TOKEN, SPOTIFY_USER_ID = get_key(".env", "SPOTIFY_TOKEN"), get_key(
+    ".env", "SPOTIFY_USER_ID"
 )
 
 SITE = "https://open.spotify.com/"
@@ -160,6 +157,4 @@ if __name__ == "__main__":
     # create_playlist('Afmælis!', 'Find the bug', False, True) #legacy nuna.!;) #the playlist created for the birthday (containing the 200 most popular songs from Google forms.)
     # create_playlist('Restin', 'Lögin sem komust ekki inn á hinn.', False, True)!;) #a playlist containing the 1100 or so other songs.
     print("creating playlist...")
-    create_playlist("new-playlist-to-test")
-
-    pass
+    create_playlist("newest-pl")

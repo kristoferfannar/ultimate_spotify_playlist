@@ -3,7 +3,3 @@
 *.txt
 __pycache__
 .env
-
-
-
-secretsAPI.py

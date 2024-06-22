@@ -18,9 +18,23 @@ Everyone wins.
 pip install -r requirements.txt
 ```
 
-2.  Get a spotify API token from somewhere. Place it in `.env`
+2.
+
+Create a Spotify Developer Project dashboard at https://developer.spotify.com/dashboard
+Copy the Client ID and Client Secret into a `.env` file in this directory.
 
 3.
+
+Allow your Project to gain access to some scopes within your account by running:
+
+```bash
+python tokens.py
+```
+
+This will also create an access token, which will be placed in your `.env`.
+It only lasts an hour, so make sure to periodically execute this program periodically.
+
+4.
 
 To grab songs into a csv from playlist links, run:
 
