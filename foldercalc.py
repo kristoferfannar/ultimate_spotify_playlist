@@ -8,19 +8,31 @@ oldforms.txt keeps hold of what links in Lög.csv have already been accounted fo
 import csv
 from afmalis import all_songs_from_playlist_id
 
-CSVFILE = __file__[:-13] + "Playlistar/Lög.csv" 
-SITE = 'https://open.spotify.com/'
-STORAGE = 'songs.csv'
+CSVFILE = __file__[:-13] + "Playlistar/Lög.csv"
+SITE = "https://open.spotify.com/"
+STORAGE = "songs.csv"
+
 
 def findformsnr():
-    with open('oldforms.txt') as forms:
-        for line in forms:
-            return int(line)
-formsreadto = findformsnr() #to keep track of which links in the Lög.csv file i have already collected from. That way I wont check the same line twice.
+    try:
+        with open("oldforms.txt") as forms:
+            for line in forms:
+                return int(line)
+
+    except FileNotFoundError:
+        return 0
+
+
+formsreadto = (
+    findformsnr()
+)  # to keep track of which links in the Lög.csv file i have already collected from. That way I wont check the same line twice.
+
 
 def update_forms_nr(counter, formsreadto):
-    with open('oldforms.txt', 'w') as forms:
-        forms.write(str(counter+formsreadto)) #updates the oldforms.txt file to the current line of Lög.csv, saying that I checked every line currently in Lög.csv
+    with open("oldforms.txt", "w") as forms:
+        forms.write(
+            str(counter + formsreadto)
+        )  # updates the oldforms.txt file to the current line of Lög.csv, saying that I checked every line currently in Lög.csv
 
 
 def opencsvfile(directory, forms):
@@ -33,23 +45,25 @@ def opencsvfile(directory, forms):
     return lines
 
 
-
 def get_all_songs():
-    with open(STORAGE, 'r') as file:
-        reader = csv.reader(file)
-        songdict = {}
-        for line in reader:
-            if len(line) > 0:
-                songdict[line[0]] = int(line[1])
-    return songdict
+    try:
+        with open(STORAGE, "r") as file:
+            reader = csv.reader(file)
+            songdict = {}
+            for line in reader:
+                if len(line) > 0:
+                    songdict[line[0]] = int(line[1])
+        return songdict
+    except FileNotFoundError:
+        return {}
 
 
 def add_songs(songdict):
-    with open(STORAGE, 'w') as file:
+    with open(STORAGE, "w") as file:
         writer = csv.writer(file)
         for song in songdict:
-            writer.writerow((song, songdict[song]))        
-        
+            writer.writerow((song, songdict[song]))
+
 
 def update_songdict(songlist, songdict):
     for song in songlist:
@@ -60,33 +74,32 @@ def update_songdict(songlist, songdict):
     return songdict
 
 
-
-
-
-
 if __name__ == "__main__":
+    print("grabbing the *new* links from Playlistar/Lög.csv...")
     lines = opencsvfile(CSVFILE, formsreadto)
-    #print(lines)
-    songdict = get_all_songs() 
+    print(f"found {len(lines)} new links")
+
+    print("getting all previously saved songs...")
+    songdict = get_all_songs()
+    print(f"found {len(songdict)} songs")
+    print("adding songs from link to saved songs...")
     for line in lines:
-        link = line[1][len(SITE):] 
-        slash = link.find('/')
-        qm = link.find('?')
-        id = link[slash+1:qm]
+        link = line[1][len(SITE) :]
+        slash = link.find("/")
+        qm = link.find("?")
+        id = link[slash + 1 : qm]
         try:
-            if link.startswith('playlist'):
+            if link.startswith("playlist"):
                 songuri = all_songs_from_playlist_id(id)
 
-            elif link.startswith('track'):
-                songuri = [f'spotify:track:{id}'] * 2
+            elif link.startswith("track"):
+                songuri = [f"spotify:track:{id}"] * 2
         except KeyError:
             continue
-
-
 
         songdict = update_songdict(songuri, songdict)
 
     add_songs(songdict)
+    print("songs added")
 
     update_forms_nr(len(lines), formsreadto)
-
