@@ -55,3 +55,20 @@ To create a new playlist with the calculations, run:
 # requires SPOTIFY API TOKEN
 python afmalis.py
 ```
+
+## Background
+
+This repository was originally created when I had just started learning programming, and was my first real personal project.
+I was about to throw a birthday party, and wanted to create the absolute best playlist for the party.
+
+I had noticed a trend with recent events, hosts created a public spotify playlist for guests to add their favourite songs to.
+While the idea was good, it's fun to create a group playlist with everyone's favourite song, the execution wasn't that great.
+Adding songs individually, one-by-one, was a hassle, and people could see who was adding each song, which felt awkward if only one or two people seemed overly excited about adding songs, while other didn't participate as much.
+
+I thought to myself that this idea could be executed better, and created a Google Forms document for people to submit links to their favourite Spotify playlists, shortly explaining to them that I had a script create a single playlist with the most popular (most occurring) songs.
+
+I had about 21 responses, many of which were either by me or by friends who I pressured to submit. Of those, 15 were playlists while 6 were tracks.
+
+In the end, I believe the total amount of songs submitted were just over a thousand, and most songs occurred only once. I decided to create a main playlist for the top 200-or-so songs, [Afmælis!](https://open.spotify.com/playlist/4AOfAjIFHy1vyLZcaeKZ4c?si=0168334dfce74092), while the rest were added to [Restin](https://open.spotify.com/playlist/5myE3gH74ra1UeHYLsaep7?si=18136a6679cb4032).
+
+The party was fun, and after some tweaking, the playlist was great!
