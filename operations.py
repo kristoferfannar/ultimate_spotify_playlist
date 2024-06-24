@@ -19,10 +19,11 @@ if __name__ == "__main__":
     songlist = get_songs_from_csv()
     songlist = sort_songlist(songlist)[:200]
     playlist_id = afmalis.find_id_from_link(
-        "https://open.spotify.com/playlist/7fJ3OoGAXLS131SYlwrwsK?si=8ba6f261b42442c2"
+        input("paste a link of a playlist of yours you'd like to overwrite: ")
     )
-    # # afmalis.remove_songlist_from_playlist(songlist, playlist_id)
+
     print("playlist id: ", playlist_id)
     afmalis.clear_playlist(playlist_id)
+
     print(f"adding {len(songlist)} songs...")
     afmalis.add_songlist_to_playlist(songlist, playlist_id)

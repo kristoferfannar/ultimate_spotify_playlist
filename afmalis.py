@@ -35,9 +35,13 @@ def create_playlist(
 
     api_response = requests.post(endpoint, data=request_body, headers=header)
     json_response = api_response.json()
-    print(api_response)
-    if api_response.status_code == 201:
-        print(f"created playlist '{playlistname}' with id '{json_response['id']}'")
+
+    if api_response.status_code != 201:
+        raise Exception(
+            f"failed to create playlist with name {playlistname}: {api_response.text}"
+        )
+
+    print(f"created playlist '{playlistname}' with id '{json_response['id']}'")
 
 
 def get_spotify_uri(songname, artist):
@@ -53,23 +57,22 @@ def get_spotify_uri(songname, artist):
         },
     )
     response_json = response.json()
-    # print(response_json)
-    # print(response_json)
     return response_json["tracks"]["items"][0]
 
 
 def find_playlist_from_link(playlist_id):
     query = f"https://api.spotify.com/v1/playlists/{playlist_id}"
-
     header = {
         "Authorization": "Bearer {}".format(SPOTIFY_TOKEN),
         "Content-Type": "application/json",
     }
 
     playlists_response = requests.get(query, headers=header)
-    json_playlists = playlists_response.json()
-    # print(json_playlists)
 
+    if playlists_response != 200:
+        raise Exception(f"failed to retrieve playlist with id: {playlist_id}")
+
+    json_playlists = playlists_response.json()
     return json_playlists
 
 
@@ -115,14 +118,15 @@ def add_from_oldplaylist_to_newplaylist(oldplaylist_link, newplaylist_id):
     }
 
     rdata = all_songs_from_playlist_id(oldplaylist_id)
-
     response = requests.post(query, headers=header, data=json.dumps(rdata))
-    json_resp = response.json()
-    # print(json_resp)
+
+    if response.status_code != 201:
+        raise Exception(
+            f"adding songs to playlist with id: {newplaylist_id} failed: {response.text}"
+        )
 
 
 def add_songlist_to_playlist(songlist, playlist_id):
-
     query = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
     # only the first 100 songs can be added per request
     response = requests.post(query, headers=HEADER, data=json.dumps(songlist[:100]))
@@ -170,7 +174,7 @@ def clear_playlist(playlist_id):
 def print_dict(somedic, indent=""):
     print()
     for key in somedic:
-        if type(somedic[key]) == dict:
+        if isinstance(somedic[key], dict):
             print(indent + key)
             print_dict(somedic[key], indent + "\t")
         else:
@@ -178,9 +182,10 @@ def print_dict(somedic, indent=""):
 
 
 if __name__ == "__main__":
-    # create_playlist('Afmælis!', 'Find the bug', False, True) #legacy nuna.!;) #the playlist created for the birthday (containing the 200 most popular songs from Google forms.)
-    # create_playlist('Restin', 'Lögin sem komust ekki inn á hinn.', False, True)!;) #a playlist containing the 1100 or so other songs.
-    # print("creating playlist...")
-    # create_playlist("Útskriftar!")
+    if SPOTIFY_TOKEN is None or SPOTIFY_USER_ID is None:
+        raise Exception(".env file not properly configured... Is it missing?")
 
-    print(len(all_songs_from_playlist_id("7fJ3OoGAXLS131SYlwrwsK")))
+    playlistname = input("what should your playlist be called? ")
+    playlist_descr = input(f"what description will {playlistname} have? ")
+    print(f"creating playlist '{playlistname}'...")
+    create_playlist(playlistname, playlist_descr)
