@@ -1,5 +1,6 @@
 # ultimate_spotify_playlist
 
+![](programming_party.jpeg)
 trying to create the absolute best spotify playlist, using Spotify's API.
 
 Plan:
@@ -8,7 +9,6 @@ Birthday guests send their spotify playlist as a link through google forms.
 I download a csv file from google forms (Playlistar/Lög.csv) with all the playlist information.
 I collect all the songs in all the playlists, including which songs are most popular (in most playlists). (foldercalc.py)
 From that info, I create a playlist of my own with Spotify's API, to create a playlist with all the songs in the birthday guests' playlist. (afmalis.py)
-Everyone wins.
 
 ## Setting up
 
@@ -25,14 +25,13 @@ Copy the Client ID and Client Secret into a `.env` file in this directory.
 
 3.
 
-Allow your Project to gain access to some scopes within your account by running:
+Generate a spotify token and add it to your `.env`:
 
 ```bash
 python tokens.py
 ```
 
-This will also create an access token, which will be placed in your `.env`.
-It only lasts an hour, so make sure to periodically execute this program periodically.
+The token only lasts an hour, so make sure to execute this program periodically.
 
 4.
 
@@ -43,9 +42,10 @@ To grab songs into a csv from playlist links, run:
 python foldercalc.py
 ```
 
-To sort through the song csv and find the most popular songs, run:
+To sort through the song csv and find the most popular songs (+ adding them to a playlist), run:
 
 ```bash
+# requires SPOTIFY API TOKEN if songs are added to playlist
 python operations.py
 ```
 

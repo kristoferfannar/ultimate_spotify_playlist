@@ -1,4 +1,4 @@
-"""For collecting links from Lög.csv and updating the database: songs.csv 
+"""For collecting links from a csv file and updating the "database": songs.csv 
 in accordance to what links from Lög.csv have not been accounted for. 
 oldforms.txt keeps hold of what links in Lög.csv have already been accounted for.
 
@@ -8,7 +8,7 @@ oldforms.txt keeps hold of what links in Lög.csv have already been accounted fo
 import csv
 from afmalis import all_songs_from_playlist_id
 
-CSVFILE = __file__[:-13] + "Playlistar/Lög.csv"
+CSVFILE = "playlists.csv"
 SITE = "https://open.spotify.com/"
 STORAGE = "songs.csv"
 
@@ -75,7 +75,7 @@ def update_songdict(songlist, songdict):
 
 
 if __name__ == "__main__":
-    print("grabbing the *new* links from Playlistar/Lög.csv...")
+    print(f"grabbing the *new* links from {CSVFILE}...")
     lines = opencsvfile(CSVFILE, formsreadto)
     print(f"found {len(lines)} new links")
 
@@ -93,7 +93,9 @@ if __name__ == "__main__":
                 songuri = all_songs_from_playlist_id(id)
 
             elif link.startswith("track"):
-                songuri = [f"spotify:track:{id}"] * 2
+                songuri = [
+                    f"spotify:track:{id}"
+                ] * 100  # ensure specially added songs are included
         except KeyError:
             continue
 

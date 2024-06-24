@@ -17,12 +17,12 @@ def sort_songlist(songlist):
 
 if __name__ == "__main__":
     songlist = get_songs_from_csv()
-    songlist = sort_songlist(songlist)
-    print("top songs:")
-    print(songlist[:10])
-    # songlist = songlist[700:900]
-    # playlist_id = afmalis.find_id_from_link(
-    #     "https://open.spotify.com/playlist/5myE3gH74ra1UeHYLsaep7?si=adc681f563e446cd"
-    # )
+    songlist = sort_songlist(songlist)[:200]
+    playlist_id = afmalis.find_id_from_link(
+        "https://open.spotify.com/playlist/7fJ3OoGAXLS131SYlwrwsK?si=8ba6f261b42442c2"
+    )
     # # afmalis.remove_songlist_from_playlist(songlist, playlist_id)
-    # afmalis.add_songlist_to_playlist(songlist, playlist_id)
+    print("playlist id: ", playlist_id)
+    afmalis.clear_playlist(playlist_id)
+    print(f"adding {len(songlist)} songs...")
+    afmalis.add_songlist_to_playlist(songlist, playlist_id)

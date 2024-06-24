@@ -36,8 +36,8 @@ def create_playlist(
     api_response = requests.post(endpoint, data=request_body, headers=header)
     json_response = api_response.json()
     print(api_response)
-    print()
-    print(json_response)
+    if api_response.status_code == 201:
+        print(f"created playlist '{playlistname}' with id '{json_response['id']}'")
 
 
 def get_spotify_uri(songname, artist):
@@ -124,23 +124,47 @@ def add_from_oldplaylist_to_newplaylist(oldplaylist_link, newplaylist_id):
 def add_songlist_to_playlist(songlist, playlist_id):
 
     query = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+    # only the first 100 songs can be added per request
     response = requests.post(query, headers=HEADER, data=json.dumps(songlist[:100]))
-    print(response)
-    print(response.json())
 
+    if response.status_code != 200:
+        raise Exception(
+            f"failed to add songs to playlist: status {response.status_code}"
+        )
+
+    print(f"added songs: {response}")
+
+    # add the rest of the songs
     if len(songlist) > 100:
         add_songlist_to_playlist(songlist[100:], playlist_id)
 
 
 def remove_songlist_from_playlist(songlist, playlist_id):
     query = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+    # only a 100 songs can be removed per request
     trackdata = {"tracks": [{"uri": i} for i in songlist[:100]]}
 
-    response = requests.delete(query, headers=HEADER, data=json.dumps(trackdata))
-    print(response)
+    requests.delete(query, headers=HEADER, data=json.dumps(trackdata))
 
+    # remove the other songs
     if len(songlist) > 100:
         remove_songlist_from_playlist(songlist[100:], playlist_id)
+
+
+def clear_playlist(playlist_id):
+    songs = all_songs_from_playlist_id(playlist_id)
+    print(f"clearing playlist with {len(songs)} songs...")
+
+    resp = None
+    batches = 0
+    while len(songs) > 0:
+        resp = remove_songlist_from_playlist(songs[: min(len(songs), 100)], playlist_id)
+        songs = songs[min(len(songs), 100) :]
+        batches += 1
+        print(f"batch {batches}")
+
+    if resp is not None:
+        print(resp.json())
 
 
 def print_dict(somedic, indent=""):
@@ -156,5 +180,7 @@ def print_dict(somedic, indent=""):
 if __name__ == "__main__":
     # create_playlist('Afmælis!', 'Find the bug', False, True) #legacy nuna.!;) #the playlist created for the birthday (containing the 200 most popular songs from Google forms.)
     # create_playlist('Restin', 'Lögin sem komust ekki inn á hinn.', False, True)!;) #a playlist containing the 1100 or so other songs.
-    print("creating playlist...")
-    create_playlist("newest-pl")
+    # print("creating playlist...")
+    # create_playlist("Útskriftar!")
+
+    print(len(all_songs_from_playlist_id("7fJ3OoGAXLS131SYlwrwsK")))
