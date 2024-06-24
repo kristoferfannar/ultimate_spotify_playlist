@@ -1,6 +1,7 @@
 # ultimate_spotify_playlist
 
 ![](programming_party.jpeg)
+
 trying to create the absolute best spotify playlist, using Spotify's API.
 
 Plan:
