@@ -64,6 +64,8 @@ def add_songs(songdict):
         for song in songdict:
             writer.writerow((song, songdict[song]))
 
+    print(f"songs added to {STORAGE}")
+
 
 def update_songdict(songlist, songdict):
     for song in songlist:
@@ -96,12 +98,12 @@ if __name__ == "__main__":
                 songuri = [
                     f"spotify:track:{id}"
                 ] * 100  # ensure specially added songs are included
-        except KeyError:
+        except Exception as e:
+            print(f"error: {e}")
             continue
 
         songdict = update_songdict(songuri, songdict)
 
     add_songs(songdict)
-    print("songs added")
 
     update_forms_nr(len(lines), formsreadto)

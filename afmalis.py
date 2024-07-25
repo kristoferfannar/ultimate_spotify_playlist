@@ -69,8 +69,10 @@ def find_playlist_from_link(playlist_id):
 
     playlists_response = requests.get(query, headers=header)
 
-    if playlists_response != 200:
-        raise Exception(f"failed to retrieve playlist with id: {playlist_id}")
+    if playlists_response.status_code != 200:
+        raise Exception(
+            f"error: {playlists_response} - failed to retrieve playlist with id: {playlist_id}"
+        )
 
     json_playlists = playlists_response.json()
     return json_playlists
@@ -131,7 +133,7 @@ def add_songlist_to_playlist(songlist, playlist_id):
     # only the first 100 songs can be added per request
     response = requests.post(query, headers=HEADER, data=json.dumps(songlist[:100]))
 
-    if response.status_code != 200:
+    if response.status_code != 201:
         raise Exception(
             f"failed to add songs to playlist: status {response.status_code}"
         )
